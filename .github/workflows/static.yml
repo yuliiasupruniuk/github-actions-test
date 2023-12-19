@@ -16,10 +16,11 @@ jobs:
         run: |
           npm ci
           npm run build-storybook
-      - uses: "finnp/create-file-action@master"
-            env:
-              FILE_NAME: "_pass.txt"
-              FILE_DATA: "index.html pass"
+      - name: Create _pass.txt file
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: echo "index.html pass" > _pass.txt
       - name: Encrypt pages with PageCrypt
           run: |
             npm i -D pagecrypt
