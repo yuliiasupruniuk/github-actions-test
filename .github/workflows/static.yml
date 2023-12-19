@@ -22,12 +22,12 @@ jobs:
           node-version: '14'
       - run: echo "index.html pass" > _pass.txt
       - name: Encrypt pages with PageCrypt
-          run: |
-            npm i -D pagecrypt
-            cat pass.txt | while read file password;
-            do
-              sudo npx pagecrypt "$file" "$file" "$password"
-            done
+        run: |
+          npm i -D pagecrypt
+          cat pass.txt | while read file password;
+          do
+            sudo npx pagecrypt "$file" "$file" "$password"
+          done
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
