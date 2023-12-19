@@ -16,6 +16,17 @@ jobs:
         run: |
           npm ci
           npm run build-storybook
+      - uses: "finnp/create-file-action@master"
+            env:
+              FILE_NAME: "_pass.txt"
+              FILE_DATA: "index.html pass"
+      - name: Encrypt pages with PageCrypt
+          run: |
+            npm i -D pagecrypt
+            cat pass.txt | while read file password;
+            do
+              sudo npx pagecrypt "$file" "$file" "$password"
+            done
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
