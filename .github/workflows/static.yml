@@ -1,24 +1,33 @@
+name: Deploy Blog
 
-name: Storybook deploy to gh-pages
 on:
   push:
     branches:
-      - dev 
-permissions:
-  contents: write
+      - dev
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Build storybook static files
-        run: |
-          npm ci
-          npm run build-storybook
-      - name: Deploy to gh-pages
-        uses: JamesIves/github-pages-deploy-action@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          branch: storybook-hosting
-          folder: storybook-static
-          commit-message: deploy storybook
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build app
+        run: npm run build-storybook
+
+      - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read
+        env:
+          SOURCE_DIR: storybook-static/
+          AWS_S3_BUCKET: yuliia-storybook-test
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
